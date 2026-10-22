@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RED SKINS — Мгновенный выкуп и продажа скинов CS2, Dota 2, Rust</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#E50914',
+              darkRed: '#7A0008',
+              bg: '#0A0B0E',
+              card: '#12141A',
+              border: '#1E222D'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #0A0B0E; color: #E1E7EF; font-family: 'Inter', sans-serif; }
+    .glass { background: rgba(18, 20, 26, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    .ticker-wrap { overflow: hidden; white-space: nowrap; }
+    .ticker-move { display: inline-block; animation: ticker 35s linear infinite; }
+    @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <!-- AUTH GUARD OVERLAY -->
+  <div id="authGuardModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md hidden">
+    <div class="glass p-8 rounded-2xl max-w-md w-full text-center border border-brand-red/30 relative overflow-hidden">
+      
+      <!-- NEW SVG LOGO FROM PHOTO -->
+      <div class="flex justify-center items-center gap-3 mb-6">
+        <svg class="w-14 h-14 text-brand-red" viewBox="0 0 100 100" fill="currentColor">
+          <path d="M20 25 L40 25 L40 55 L50 65 L60 55 L60 25 L80 25 L80 60 L50 90 L20 60 Z M35 35 L35 48 L50 63 L65 48 L65 35 L70 35 L70 55 L50 75 L30 55 L30 35 Z" />
+        </svg>
+        <span class="text-3xl font-black tracking-wider text-white">RED<span class="text-brand-red">SKINS</span></span>
+      </div>
+
+      <h2 class="text-2xl font-bold mb-2">Авторизация через Steam</h2>
+      <p class="text-gray-400 text-sm mb-6">Для работы с платформой войдите через официальный Steam OpenID.</p>
+      
+      <button onclick="loginWithSteam()" class="w-full py-3.5 px-6 bg-[#171a21] hover:bg-[#2a475e] text-white font-medium rounded-xl border border-gray-700 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg group">
+        <i class="fa-brands fa-steam text-2xl group-hover:scale-110 transition-transform"></i>
+        <span>Войти через Steam</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 glass border-b border-brand-border">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <!-- Logo -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('buyout')">
+        <svg class="w-10 h-10 text-brand-red" viewBox="0 0 100 100" fill="currentColor">
+          <path d="M20 25 L40 25 L40 55 L50 65 L60 55 L60 25 L80 25 L80 60 L50 90 L20 60 Z M35 35 L35 48 L50 63 L65 48 L65 35 L70 35 L70 55 L50 75 L30 55 L30 35 Z" />
+        </svg>
+        <span class="text-xl font-black tracking-wider text-white">RED<span class="text-brand-red">SKINS</span></span>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="hidden md:flex items-center gap-1 bg-brand-bg/60 p-1 rounded-xl border border-brand-border">
+        <button onclick="switchTab('buyout')" id="nav-buyout" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all bg-brand-red text-white shadow-md">Продать скины</button>
+        <button onclick="switchTab('market')" id="nav-market" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all text-gray-400 hover:text-white">Купить скины</button>
+        <button onclick="switchTab('payout')" id="nav-payout" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all text-gray-400 hover:text-white">Баланс & Вывод</button>
+      </nav>
+
+      <!-- User Area -->
+      <div id="userArea" class="flex items-center gap-4">
+        <!-- JS Populated -->
+      </div>
+    </div>
+  </header>
+
+  <!-- LIVE TICKER -->
+  <div class="bg-brand-card/80 border-y border-brand-border py-2 text-xs ticker-wrap">
+    <div class="ticker-move flex items-center gap-8" id="tickerContent">
+      <div class="flex items-center gap-2 text-gray-400"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> MarketCSGO Gateway Active</div>
+      <div class="flex items-center gap-2 bg-brand-bg/50 px-3 py-1 rounded-full border border-brand-border"><i class="fa-solid fa-check text-emerald-400"></i> User*** продал AK-47 за <span class="text-emerald-400 font-bold">2 100 ₽</span></div>
+      <div class="flex items-center gap-2 bg-brand-bg/50 px-3 py-1 rounded-full border border-brand-border"><i class="fa-solid fa-check text-emerald-400"></i> Trader*** купил AWP за <span class="text-brand-red font-bold">7 400 ₽</span></div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
+    <!-- SECTION 1: SELL -->
+    <section id="section-buyout" class="space-y-6">
+      <div class="flex justify-between items-center bg-brand-card p-4 rounded-2xl border border-brand-border">
+        <div class="flex gap-2">
+          <button onclick="setGame('730')" id="game-730" class="px-4 py-2 rounded-xl text-sm font-bold bg-brand-red text-white">CS2</button>
+          <button onclick="setGame('570')" id="game-570" class="px-4 py-2 rounded-xl text-sm font-bold bg-brand-bg text-gray-400 border border-brand-border">Dota 2</button>
+        </div>
+        <button onclick="loadInventory()" class="p-2.5 bg-brand-bg hover:bg-brand-border text-gray-300 rounded-xl"><i class="fa-solid fa-arrows-rotate"></i></button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div class="lg:col-span-3 bg-brand-card p-6 rounded-2xl border border-brand-border min-h-[400px]">
+          <h2 class="text-lg font-bold mb-4">Ваш инвентарь Steam</h2>
+          <div id="inventoryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
+        </div>
+
+        <div class="bg-brand-card p-6 rounded-2xl border border-brand-border h-fit sticky top-24 space-y-4">
+          <h3 class="text-lg font-bold border-b border-brand-border pb-3">Расчет сделки</h3>
+          <div id="selectedCount" class="text-sm text-gray-400">Выбрано: 0 шт.</div>
+          <div class="text-2xl font-black text-emerald-400" id="totalPayout">0 ₽</div>
+          <button onclick="processMarketSell()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-black font-extrabold rounded-xl shadow-lg uppercase">
+            <i class="fa-solid fa-bolt mr-1"></i> Продать мгновенно
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: MARKET -->
+    <section id="section-market" class="hidden space-y-6">
+      <div id="marketGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+    </section>
+
+    <!-- SECTION 3: PAYOUT -->
+    <section id="section-payout" class="hidden max-w-xl mx-auto bg-brand-card p-6 rounded-2xl border border-brand-border space-y-4">
+      <h2 class="text-xl font-bold">Пополнение и Вывод</h2>
+      <input type="number" id="payAmount" placeholder="Сумма (₽)" class="w-full bg-brand-bg p-3.5 rounded-xl border border-brand-border text-white">
+      <button onclick="initYooPayment()" class="w-full py-3.5 bg-brand-red text-white font-bold rounded-xl">Пополнить через YooKassa</button>
+    </section>
+  </main>
+
+  <script>
+    const CONFIG = { API_URL: '/api' };
+    let state = { token: localStorage.getItem('redskins_token'), selected: new Set() };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('token')) {
+        state.token = urlParams.get('token');
+        localStorage.setItem('redskins_token', state.token);
+        window.history.replaceState({}, document.title, "/");
+      }
+      if (!state.token) {
+        document.getElementById('authGuardModal').classList.remove('hidden');
+      } else {
+        document.getElementById('authGuardModal').classList.add('hidden');
+        renderHeader();
+      }
+    });
+
+    function loginWithSteam() { window.location.href = '/api/auth/steam'; }
+
+    function renderHeader() {
+      document.getElementById('userArea').innerHTML = `
+        <div class="flex items-center gap-3 bg-brand-bg px-3 py-1.5 rounded-xl border border-brand-border">
+          <div class="text-xs text-right">
+            <div class="font-bold text-white">Steam User</div>
+            <div class="text-emerald-400 font-bold">0 ₽</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function switchTab(tab) {
+      ['buyout', 'market', 'payout'].forEach(t => document.getElementById(`section-${t}`).classList.add('hidden'));
+      document.getElementById(`section-${tab}`).classList.remove('hidden');
+    }
+
+    async function processMarketSell() {
+      if (!state.selected.size) return alert('Выберите предметы!');
+      const res = await fetch('/api/market/sell', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.token}` },
+        body: JSON.stringify({ items: Array.from(state.selected) })
+      });
+      const data = await res.json();
+      if (data.success) alert('Трейд отправлен через MarketCSGO API!');
+      else alert(data.error || 'Ошибка выкупа');
+    }
+
+    async function initYooPayment() {
+      const amount = document.getElementById('payAmount').value;
+      const res = await fetch('/api/payment/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.token}` },
+        body: JSON.stringify({ amount })
+      });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+    }
+  </script>
+</body>
+</html>
