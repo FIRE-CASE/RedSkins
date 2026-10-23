@@ -42,11 +42,11 @@
         <svg class="w-14 h-14 text-brand-red" viewBox="0 0 100 100" fill="currentColor">
           <path d="M20 25 L40 25 L40 55 L50 65 L60 55 L60 25 L80 25 L80 60 L50 90 L20 60 Z M35 35 L35 48 L50 63 L65 48 L65 35 L70 35 L70 55 L50 75 L30 55 L30 35 Z" />
         </svg>
-        <span class="text-3xl font-black tracking-wider text-white">RED<span class="text-brand-red">SKINS</span></span>
+        <span class="text-3xl font-black tracking-wider text-black">RED<span class="text-brand-red">SKINS</span></span>
       </div>
 
       <h2 class="text-2xl font-bold mb-2">Авторизация через Steam</h2>
-      <p class="text-gray-400 text-sm mb-6">Для работы с платформой войдите через официальный Steam OpenID.</p>
+      <p class="text-gray-400 text-sm mb-6">Для работы с платформой войдите через Steam.</p>
       
       <button onclick="loginWithSteam()" class="w-full py-3.5 px-6 bg-[#171a21] hover:bg-[#2a475e] text-white font-medium rounded-xl border border-gray-700 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg group">
         <i class="fa-brands fa-steam text-2xl group-hover:scale-110 transition-transform"></i>
@@ -63,7 +63,7 @@
         <svg class="w-10 h-10 text-brand-red" viewBox="0 0 100 100" fill="currentColor">
           <path d="M20 25 L40 25 L40 55 L50 65 L60 55 L60 25 L80 25 L80 60 L50 90 L20 60 Z M35 35 L35 48 L50 63 L65 48 L65 35 L70 35 L70 55 L50 75 L30 55 L30 35 Z" />
         </svg>
-        <span class="text-xl font-black tracking-wider text-white">RED<span class="text-brand-red">SKINS</span></span>
+        <span class="text-xl font-black tracking-wider text-black">RED<span class="text-brand-red">SKINS</span></span>
       </div>
 
       <!-- Navigation -->
@@ -83,7 +83,7 @@
   <!-- LIVE TICKER -->
   <div class="bg-brand-card/80 border-y border-brand-border py-2 text-xs ticker-wrap">
     <div class="ticker-move flex items-center gap-8" id="tickerContent">
-      <div class="flex items-center gap-2 text-gray-400"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> MarketCSGO Gateway Active</div>
+      <div class="flex items-center gap-2 text-gray-400"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>Gateway Active</div>
       <div class="flex items-center gap-2 bg-brand-bg/50 px-3 py-1 rounded-full border border-brand-border"><i class="fa-solid fa-check text-emerald-400"></i> User*** продал AK-47 за <span class="text-emerald-400 font-bold">2 100 ₽</span></div>
       <div class="flex items-center gap-2 bg-brand-bg/50 px-3 py-1 rounded-full border border-brand-border"><i class="fa-solid fa-check text-emerald-400"></i> Trader*** купил AWP за <span class="text-brand-red font-bold">7 400 ₽</span></div>
     </div>
@@ -132,7 +132,7 @@
   </main>
 
   <script>
-    const CONFIG = { API_URL: '/api' };
+    const CONFIG = { API_URL: 'https://reddrop-391o.onrender.com/' };
     let state = { token: localStorage.getItem('redskins_token'), selected: new Set() };
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -176,7 +176,7 @@
         body: JSON.stringify({ items: Array.from(state.selected) })
       });
       const data = await res.json();
-      if (data.success) alert('Трейд отправлен через MarketCSGO API!');
+      if (data.success) alert('Трейд отправлен!');
       else alert(data.error || 'Ошибка выкупа');
     }
 
